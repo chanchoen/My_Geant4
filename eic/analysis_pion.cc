@@ -69,7 +69,10 @@ int main(int argc, char* argv[]) {
   unsigned int entries = drInterface->entries();
 
   std::vector<float> E_Ss,E_Cs;
-
+  
+  std::ofstream S_C_Energy;
+  S_C_Energy.open("Enery_data.scv");
+  
   while (drInterface->numEvt() < entries) {
     if (drInterface->numEvt() % 100 == 0) printf("Analyzing %dth event ...\n", drInterface->numEvt());
 
@@ -134,11 +137,13 @@ int main(int argc, char* argv[]) {
 
     E_Cs.push_back(cEtmp);
     E_Ss.push_back(sEtmp);
+    S_C_Energy<< cEtmp << sEtmp;
 
     tE_C->Fill(cEtmp);
     tE_S->Fill(sEtmp);
     tE_DR->Fill(functions::E_DR291(cEtmp,sEtmp));
-  } // event loop
+  } 
+  S_C_Energy.close();// event loop
 
   TCanvas* c = new TCanvas("c","");
 
@@ -205,14 +210,6 @@ int main(int argc, char* argv[]) {
   tNhit_C->Draw("Hist"); c->SaveAs(filename+"_nhitC.png");
   tNhit_S->Draw("Hist"); c->SaveAs(filename+"_nhitS.png");
   
-  std::ofstream S_C_Energy;
-  std::vector<float> S0E = E_Ss, C0E = E_Cs;
-  S_C_Energy.open("Enery_data.scv");
-  while (true) {
-    S_C_Energy<< C0E <<" "<< S0E;
-    if (!in.good()) break;
-  }
-  S_C_Energy.close();
   
   
   
